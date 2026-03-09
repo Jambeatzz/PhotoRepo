@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>01 — Days I could</title>
+  <title>Atthesea — Days I could</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Barlow:wght@300;400;500&family=Barlow+Condensed:wght@300;400;600&display=swap" rel="stylesheet"/>
@@ -132,12 +132,12 @@
   <a href="index.html" class="nav-back" data-hover>Alle Alben</a>
 </nav>
 <header class="album-header">
-  <p class="album-breadcrumb">Portfolio — 01</p>
-  <h1 class="album-title">01</h1>
+  <p class="album-breadcrumb">Portfolio — Atthesea</p>
+  <h1 class="album-title">Atthesea</h1>
   <div class="album-meta-row">
     <p class="album-desc">Eine fotografische Serie.</p>
     <div class="album-stats">
-      <div class="album-stat"><span class="num">8</span><span class="lbl">Fotos</span></div>
+      <div class="album-stat"><span class="num">10</span><span class="lbl">Fotos</span></div>
     </div>
   </div>
 </header>
@@ -154,13 +154,13 @@
 <div class="next-album-section">
   <div>
     <p class="next-label">Nächstes Album</p>
-    <p class="next-name">Atthesea</p>
+    <p class="next-name">01</p>
   </div>
-  <a href="album-atthesea.html" class="next-link" data-hover>Album öffnen</a>
+  <a href="album-01.html" class="next-link" data-hover>Album öffnen</a>
 </div>
 <footer>
   <p>© 2025 Jordi Miguel Hohmann</p>
-  <p>01</p>
+  <p>Atthesea</p>
 </footer>
 <div class="lightbox" id="lightbox">
   <button class="lb-close" onclick="closeLB()" data-hover>Schließen ✕</button>
@@ -174,13 +174,13 @@
   <div class="lb-progress" id="lbProgress"></div>
 </div>
 <script>
-  const PHOTOS = [{"src": "bilder/01/photo_2026-03-09_01-12-36.jpg", "title": "Photo 2026 03 09 01 12 36"}, {"src": "bilder/01/photo_2026-03-09_01-12-42.jpg", "title": "Photo 2026 03 09 01 12 42"}, {"src": "bilder/01/photo_2026-03-09_01-12-43.jpg", "title": "Photo 2026 03 09 01 12 43"}, {"src": "bilder/01/photo_2026-03-09_01-12-45.jpg", "title": "Photo 2026 03 09 01 12 45"}, {"src": "bilder/01/photo_2026-03-09_01-12-46.jpg", "title": "Photo 2026 03 09 01 12 46"}, {"src": "bilder/01/photo_2026-03-09_01-12-48.jpg", "title": "Photo 2026 03 09 01 12 48"}, {"src": "bilder/01/photo_2026-03-09_01-12-49.jpg", "title": "Photo 2026 03 09 01 12 49"}, {"src": "bilder/01/photo_2026-03-09_01-12-51.jpg", "title": "Photo 2026 03 09 01 12 51"}];
+  const PHOTOS = [{"src": "bilder/AtTheSea/IMG_2953.jpeg", "title": "Img 2953"}, {"src": "bilder/AtTheSea/IMG_2954.jpeg", "title": "Img 2954"}, {"src": "bilder/AtTheSea/IMG_2958.jpeg", "title": "Img 2958"}, {"src": "bilder/AtTheSea/IMG_2959.jpeg", "title": "Img 2959"}, {"src": "bilder/AtTheSea/IMG_2961.jpeg", "title": "Img 2961"}, {"src": "bilder/AtTheSea/IMG_2965.jpeg", "title": "Img 2965"}, {"src": "bilder/AtTheSea/IMG_3001.jpeg", "title": "Img 3001"}, {"src": "bilder/AtTheSea/IMG_3002.jpeg", "title": "Img 3002"}, {"src": "bilder/AtTheSea/IMG_3003.jpeg", "title": "Img 3003"}, {"src": "bilder/AtTheSea/IMG_3004.jpeg", "title": "Img 3004"}];
   let lbIdx = 0;
 
   function renderGrid() {
     const grid = document.getElementById('photoGrid');
     if (!PHOTOS.length) {
-      grid.innerHTML = '<div class="placeholder-card" style="min-height:400px"><svg width="48" height="48" viewBox="0 0 48 48" fill="none"><rect x="6" y="10" width="36" height="28" rx="2" stroke="#c8a96e" stroke-width="1" stroke-opacity=".3"/><circle cx="17" cy="21" r="4" stroke="#c8a96e" stroke-width="1" stroke-opacity=".3"/><path d="M6 34L16 24L22 30L30 22L42 34" stroke="#c8a96e" stroke-width="1" stroke-opacity=".3"/></svg><p>Noch keine Fotos in diesem Album.<br>Bilder in bilder/01/ ablegen &amp; build.py ausführen.</p></div>';
+      grid.innerHTML = '<div class="placeholder-card" style="min-height:400px"><svg width="48" height="48" viewBox="0 0 48 48" fill="none"><rect x="6" y="10" width="36" height="28" rx="2" stroke="#c8a96e" stroke-width="1" stroke-opacity=".3"/><circle cx="17" cy="21" r="4" stroke="#c8a96e" stroke-width="1" stroke-opacity=".3"/><path d="M6 34L16 24L22 30L30 22L42 34" stroke="#c8a96e" stroke-width="1" stroke-opacity=".3"/></svg><p>Noch keine Fotos in diesem Album.<br>Bilder in bilder/AtTheSea/ ablegen &amp; build.py ausführen.</p></div>';
       return;
     }
     grid.innerHTML = '';
