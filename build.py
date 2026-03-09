@@ -41,12 +41,12 @@ from pathlib import Path
 # ─── KONFIGURATION ────────────────────────────────────────────────────────────
 BILDER_DIR   = "bilder"          # Ordner mit deinen Album-Unterordnern
 OUTPUT_DIR   = "."               # Wo die HTML-Dateien landen (gleicher Ordner)
-SITE_TITLE   = "LENS"            # Dein Portfolio-Name (in <title>)
-AUTHOR_NAME  = "Dein Name"       # Dein Name
-EMAIL        = "deine@email.de"  # Kontakt-E-Mail
-INSTAGRAM    = "@dein_handle"    # Instagram-Handle
-INSTAGRAM_URL= "https://instagram.com/dein_handle"
-LOCATION     = "Deutschland"     # Dein Standort
+SITE_TITLE   = "Days I could"            # Dein Portfolio-Name (in <title>)
+AUTHOR_NAME  = "Jordi Miguel Hohmann"       # Dein Name
+EMAIL        = "jordihohmann@icloud.com"  # Kontakt-E-Mail
+INSTAGRAM    = "@jj.randomshit"    # Instagram-Handle
+INSTAGRAM_URL= "https://instagram.com/jj.randomshit"
+LOCATION     = "Hamburg - DE"     # Dein Standort
 COORDINATES  = "48°08'N — 11°34'E"  # Koordinaten im Hero
 ABOUT_TEXT_1 = "Schreib hier etwas über dich — deinen fotografischen Ansatz, deine Inspiration und was dich zur Architektur- und Abstraktfotografie gebracht hat."
 ABOUT_TEXT_2 = '\u201eFür mich ist Fotografie die Kunst, im Alltäglichen das Außergewöhnliche zu sehen \u2014 eine Fassade, ein Schattenwurf, eine Kurve aus Beton.\u201c'
