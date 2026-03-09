@@ -31,7 +31,10 @@
 
     body { background:var(--off-white); color:var(--text); font-family:var(--sans); font-weight:300; overflow-x:hidden; cursor:none; }
     nav { position:fixed; top:0; left:0; right:0; z-index:100; display:flex; justify-content:space-between;
-      align-items:center; padding:2rem 3rem; }
+      align-items:center; padding:2rem 3rem;
+      transition: background .4s, padding .4s, box-shadow .4s; }
+    nav.scrolled { background:rgba(242,239,233,.97); padding:1.2rem 3rem;
+      box-shadow:0 1px 0 rgba(0,0,0,.08); backdrop-filter:blur(12px); }
     .nav-logo { font-family:var(--condensed); font-size:1.4rem; font-weight:600; letter-spacing:.35em;
       text-transform:uppercase; color:var(--black); text-decoration:none; }
     .nav-links { display:flex; gap:3rem; list-style:none; }
@@ -259,6 +262,14 @@
         <div class="album-arrow">→</div>`;
       grid.appendChild(card);
     });
+  }
+
+  // Navbar scroll effect
+  const _nav = document.querySelector('nav');
+  if (_nav) {
+    const _onScroll = () => _nav.classList.toggle('scrolled', window.scrollY > 40);
+    window.addEventListener('scroll', _onScroll, { passive: true });
+    _onScroll();
   }
 
   const _cur = document.getElementById('cursor');

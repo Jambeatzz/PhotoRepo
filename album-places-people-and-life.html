@@ -31,7 +31,10 @@
 
     body { background:var(--black); color:var(--off-white); font-family:var(--sans); font-weight:300; overflow-x:hidden; cursor:none; }
     nav { position:fixed; top:0; left:0; right:0; z-index:100; display:flex; justify-content:space-between; align-items:center;
-      padding:2rem 3rem; background:linear-gradient(to bottom,rgba(10,10,10,.9),transparent); }
+      padding:2rem 3rem; background:linear-gradient(to bottom,rgba(10,10,10,.85),transparent);
+      transition: background .4s, padding .4s, box-shadow .4s; }
+    nav.scrolled { background:rgba(10,10,10,.96); padding:1.2rem 3rem;
+      box-shadow:0 1px 0 rgba(255,255,255,.04); backdrop-filter:blur(16px); }
     .nav-logo { font-family:var(--condensed); font-size:1.4rem; font-weight:600; letter-spacing:.35em;
       text-transform:uppercase; color:var(--off-white); text-decoration:none; }
     .nav-back { font-family:var(--condensed); font-size:.8rem; letter-spacing:.2em; text-transform:uppercase;
@@ -129,7 +132,7 @@
 <div class="cursor-ring" id="cursorRing"></div>
 <nav>
   <a href="index.html" class="nav-logo" data-hover>LENS</a>
-  <a href="index.html" class="nav-back" data-hover>{C['album_page']['back_link']}</a>
+  <a href="index.html" class="nav-back" data-hover>Alle Alben</a>
 </nav>
 <header class="album-header">
   <p class="album-breadcrumb">Portfolio — Places People And Life</p>
@@ -142,10 +145,10 @@
   </div>
 </header>
 <div class="view-controls">
-  <span class="view-label">{C['album_page']['view_label']}</span>
-  <button class="view-btn active" id="btn-masonry" onclick="setView('masonry')" data-hover>{C['album_page']['view_mosaic']}</button>
-  <button class="view-btn" id="btn-uniform" onclick="setView('uniform')" data-hover>{C['album_page']['view_grid']}</button>
-  <button class="view-btn" id="btn-wide" onclick="setView('wide')" data-hover>{C['album_page']['view_single']}</button>
+  <span class="view-label">Ansicht</span>
+  <button class="view-btn active" id="btn-masonry" onclick="setView('masonry')" data-hover>Mosaik</button>
+  <button class="view-btn" id="btn-uniform" onclick="setView('uniform')" data-hover>Raster</button>
+  <button class="view-btn" id="btn-wide" onclick="setView('wide')" data-hover>Einzeln</button>
 </div>
 <section class="photos-section">
   <div class="grid-masonry" id="photoGrid"></div>
@@ -153,17 +156,17 @@
 
 <div class="next-album-section">
   <div>
-    <p class="next-label">{C['album_page']['next_album_label']}</p>
+    <p class="next-label">Nächstes Album</p>
     <p class="next-name">Places Structure And Refractions</p>
   </div>
-  <a href="album-places-structure-and-refractions.html" class="next-link" data-hover>{C['album_page']['next_album_button']}</a>
+  <a href="album-places-structure-and-refractions.html" class="next-link" data-hover>Album öffnen</a>
 </div>
 <footer>
   <p>© 2025 Jordi Miguel Hohmann</p>
   <p>Places People And Life</p>
 </footer>
 <div class="lightbox" id="lightbox">
-  <button class="lb-close" onclick="closeLB()" data-hover>{C['album_page']['lightbox_close']}</button>
+  <button class="lb-close" onclick="closeLB()" data-hover>Schließen ✕</button>
   <button class="lb-nav prev" onclick="navLB(-1)" data-hover>←</button>
   <div class="lb-img-wrap"><img src="" alt="" class="lb-img" id="lbImg"/></div>
   <button class="lb-nav next" onclick="navLB(1)" data-hover>→</button>
@@ -226,6 +229,14 @@
   });
 
   renderGrid();
+
+  // Navbar scroll effect
+  const _nav = document.querySelector('nav');
+  if (_nav) {
+    const _onScroll = () => _nav.classList.toggle('scrolled', window.scrollY > 40);
+    window.addEventListener('scroll', _onScroll, { passive: true });
+    _onScroll();
+  }
 
   const _cur = document.getElementById('cursor');
   const _ring = document.getElementById('cursorRing');
