@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>Atthesea — Days I could</title>
+  <title>Atthesea — LENS</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Barlow:wght@300;400;500&family=Barlow+Condensed:wght@300;400;600&display=swap" rel="stylesheet"/>
@@ -128,8 +128,8 @@
 <div class="cursor" id="cursor"></div>
 <div class="cursor-ring" id="cursorRing"></div>
 <nav>
-  <a href="index.html" class="nav-logo" data-hover>Days I could</a>
-  <a href="index.html" class="nav-back" data-hover>Alle Alben</a>
+  <a href="index.html" class="nav-logo" data-hover>LENS</a>
+  <a href="index.html" class="nav-back" data-hover>{C['album_page']['back_link']}</a>
 </nav>
 <header class="album-header">
   <p class="album-breadcrumb">Portfolio — Atthesea</p>
@@ -142,10 +142,10 @@
   </div>
 </header>
 <div class="view-controls">
-  <span class="view-label">Ansicht</span>
-  <button class="view-btn active" id="btn-masonry" onclick="setView('masonry')" data-hover>Mosaik</button>
-  <button class="view-btn" id="btn-uniform" onclick="setView('uniform')" data-hover>Raster</button>
-  <button class="view-btn" id="btn-wide" onclick="setView('wide')" data-hover>Einzeln</button>
+  <span class="view-label">{C['album_page']['view_label']}</span>
+  <button class="view-btn active" id="btn-masonry" onclick="setView('masonry')" data-hover>{C['album_page']['view_mosaic']}</button>
+  <button class="view-btn" id="btn-uniform" onclick="setView('uniform')" data-hover>{C['album_page']['view_grid']}</button>
+  <button class="view-btn" id="btn-wide" onclick="setView('wide')" data-hover>{C['album_page']['view_single']}</button>
 </div>
 <section class="photos-section">
   <div class="grid-masonry" id="photoGrid"></div>
@@ -153,17 +153,17 @@
 
 <div class="next-album-section">
   <div>
-    <p class="next-label">Nächstes Album</p>
+    <p class="next-label">{C['album_page']['next_album_label']}</p>
     <p class="next-name">01</p>
   </div>
-  <a href="album-01.html" class="next-link" data-hover>Album öffnen</a>
+  <a href="album-01.html" class="next-link" data-hover>{C['album_page']['next_album_button']}</a>
 </div>
 <footer>
-  <p>© 2025 Jordi Miguel Hohmann</p>
+  <p>© 2025 Dein Name</p>
   <p>Atthesea</p>
 </footer>
 <div class="lightbox" id="lightbox">
-  <button class="lb-close" onclick="closeLB()" data-hover>Schließen ✕</button>
+  <button class="lb-close" onclick="closeLB()" data-hover>{C['album_page']['lightbox_close']}</button>
   <button class="lb-nav prev" onclick="navLB(-1)" data-hover>←</button>
   <div class="lb-img-wrap"><img src="" alt="" class="lb-img" id="lbImg"/></div>
   <button class="lb-nav next" onclick="navLB(1)" data-hover>→</button>
@@ -180,7 +180,7 @@
   function renderGrid() {
     const grid = document.getElementById('photoGrid');
     if (!PHOTOS.length) {
-      grid.innerHTML = '<div class="placeholder-card" style="min-height:400px"><svg width="48" height="48" viewBox="0 0 48 48" fill="none"><rect x="6" y="10" width="36" height="28" rx="2" stroke="#c8a96e" stroke-width="1" stroke-opacity=".3"/><circle cx="17" cy="21" r="4" stroke="#c8a96e" stroke-width="1" stroke-opacity=".3"/><path d="M6 34L16 24L22 30L30 22L42 34" stroke="#c8a96e" stroke-width="1" stroke-opacity=".3"/></svg><p>Noch keine Fotos in diesem Album.<br>Bilder in bilder/AtTheSea/ ablegen &amp; build.py ausführen.</p></div>';
+      grid.innerHTML = '<div class="placeholder-card" style="min-height:400px"><svg width="48" height="48" viewBox="0 0 48 48" fill="none"><rect x="6" y="10" width="36" height="28" rx="2" stroke="#c8a96e" stroke-width="1" stroke-opacity=".3"/><circle cx="17" cy="21" r="4" stroke="#c8a96e" stroke-width="1" stroke-opacity=".3"/><path d="M6 34L16 24L22 30L30 22L42 34" stroke="#c8a96e" stroke-width="1" stroke-opacity=".3"/></svg><p>Noch keine Fotos in diesem Album. Bilder in den Album-Ordner ablegen & build.py ausführen.</p></div>';
       return;
     }
     grid.innerHTML = '';
