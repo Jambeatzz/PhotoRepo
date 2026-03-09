@@ -253,6 +253,14 @@ SHARED_CSS = """
 """
 
 CURSOR_JS = """
+  // Navbar scroll effect
+  const _nav = document.querySelector('nav');
+  if (_nav) {
+    const _onScroll = () => _nav.classList.toggle('scrolled', window.scrollY > 40);
+    window.addEventListener('scroll', _onScroll, { passive: true });
+    _onScroll();
+  }
+
   const _cur = document.getElementById('cursor');
   const _ring = document.getElementById('cursorRing');
   if (_cur && _ring) {
@@ -309,7 +317,10 @@ def build_index(albums):
 {SHARED_CSS}
     body {{ background:var(--off-white); color:var(--text); font-family:var(--sans); font-weight:300; overflow-x:hidden; cursor:none; }}
     nav {{ position:fixed; top:0; left:0; right:0; z-index:100; display:flex; justify-content:space-between;
-      align-items:center; padding:2rem 3rem; }}
+      align-items:center; padding:2rem 3rem;
+      transition: background .4s, padding .4s, box-shadow .4s; }}
+    nav.scrolled {{ background:rgba(242,239,233,.97); padding:1.2rem 3rem;
+      box-shadow:0 1px 0 rgba(0,0,0,.08); backdrop-filter:blur(12px); }}
     .nav-logo {{ font-family:var(--condensed); font-size:1.4rem; font-weight:600; letter-spacing:.35em;
       text-transform:uppercase; color:var(--black); text-decoration:none; }}
     .nav-links {{ display:flex; gap:3rem; list-style:none; }}
@@ -529,6 +540,17 @@ def build_album_page(album, all_albums):
     next_album = all_albums[(idx + 1) % len(all_albums)] if len(all_albums) > 1 else None
     prev_album = all_albums[(idx - 1) % len(all_albums)] if len(all_albums) > 1 else None
 
+    # Resolve all C[] values upfront so they can be used directly in the f-string
+    txt_back        = C["album_page"]["back_link"]
+    txt_view_label  = C["album_page"]["view_label"]
+    txt_mosaic      = C["album_page"]["view_mosaic"]
+    txt_grid        = C["album_page"]["view_grid"]
+    txt_single      = C["album_page"]["view_single"]
+    txt_lb_close    = C["album_page"]["lightbox_close"]
+    txt_next_label  = C["album_page"]["next_album_label"]
+    txt_next_btn    = C["album_page"]["next_album_button"]
+    txt_empty       = C["album_page"]["empty_album_message"]
+
     title_parts = album["name"].split()
     if len(title_parts) > 1:
         title_html = " ".join(title_parts[:-1]) + "<br><em>" + title_parts[-1] + "</em>"
@@ -540,10 +562,10 @@ def build_album_page(album, all_albums):
         next_section = f"""
 <div class="next-album-section">
   <div>
-    <p class="next-label">{{C['album_page']['next_album_label']}}</p>
+    <p class="next-label">{txt_next_label}</p>
     <p class="next-name">{next_album['name']}</p>
   </div>
-  <a href="album-{next_album['slug']}.html" class="next-link" data-hover>{{C['album_page']['next_album_button']}}</a>
+  <a href="album-{next_album['slug']}.html" class="next-link" data-hover>{txt_next_btn}</a>
 </div>"""
 
     return f"""<!DOCTYPE html>
@@ -559,7 +581,10 @@ def build_album_page(album, all_albums):
 {SHARED_CSS}
     body {{ background:var(--black); color:var(--off-white); font-family:var(--sans); font-weight:300; overflow-x:hidden; cursor:none; }}
     nav {{ position:fixed; top:0; left:0; right:0; z-index:100; display:flex; justify-content:space-between; align-items:center;
-      padding:2rem 3rem; background:linear-gradient(to bottom,rgba(10,10,10,.9),transparent); }}
+      padding:2rem 3rem; background:linear-gradient(to bottom,rgba(10,10,10,.85),transparent);
+      transition: background .4s, padding .4s, box-shadow .4s; }}
+    nav.scrolled {{ background:rgba(10,10,10,.96); padding:1.2rem 3rem;
+      box-shadow:0 1px 0 rgba(255,255,255,.04); backdrop-filter:blur(16px); }}
     .nav-logo {{ font-family:var(--condensed); font-size:1.4rem; font-weight:600; letter-spacing:.35em;
       text-transform:uppercase; color:var(--off-white); text-decoration:none; }}
     .nav-back {{ font-family:var(--condensed); font-size:.8rem; letter-spacing:.2em; text-transform:uppercase;
@@ -657,7 +682,7 @@ def build_album_page(album, all_albums):
 <div class="cursor-ring" id="cursorRing"></div>
 <nav>
   <a href="index.html" class="nav-logo" data-hover>{SITE_TITLE}</a>
-  <a href="index.html" class="nav-back" data-hover>{{C['album_page']['back_link']}}</a>
+  <a href="index.html" class="nav-back" data-hover>{txt_back}</a>
 </nav>
 <header class="album-header">
   <p class="album-breadcrumb">Portfolio — {album['name']}</p>
@@ -670,10 +695,10 @@ def build_album_page(album, all_albums):
   </div>
 </header>
 <div class="view-controls">
-  <span class="view-label">{{C['album_page']['view_label']}}</span>
-  <button class="view-btn active" id="btn-masonry" onclick="setView('masonry')" data-hover>{{C['album_page']['view_mosaic']}}</button>
-  <button class="view-btn" id="btn-uniform" onclick="setView('uniform')" data-hover>{{C['album_page']['view_grid']}}</button>
-  <button class="view-btn" id="btn-wide" onclick="setView('wide')" data-hover>{{C['album_page']['view_single']}}</button>
+  <span class="view-label">{txt_view_label}</span>
+  <button class="view-btn active" id="btn-masonry" onclick="setView('masonry')" data-hover>{txt_mosaic}</button>
+  <button class="view-btn" id="btn-uniform" onclick="setView('uniform')" data-hover>{txt_grid}</button>
+  <button class="view-btn" id="btn-wide" onclick="setView('wide')" data-hover>{txt_single}</button>
 </div>
 <section class="photos-section">
   <div class="grid-masonry" id="photoGrid"></div>
@@ -684,7 +709,7 @@ def build_album_page(album, all_albums):
   <p>{album['name']}</p>
 </footer>
 <div class="lightbox" id="lightbox">
-  <button class="lb-close" onclick="closeLB()" data-hover>{{C['album_page']['lightbox_close']}}</button>
+  <button class="lb-close" onclick="closeLB()" data-hover>{txt_lb_close}</button>
   <button class="lb-nav prev" onclick="navLB(-1)" data-hover>←</button>
   <div class="lb-img-wrap"><img src="" alt="" class="lb-img" id="lbImg"/></div>
   <button class="lb-nav next" onclick="navLB(1)" data-hover>→</button>
@@ -701,7 +726,7 @@ def build_album_page(album, all_albums):
   function renderGrid() {{
     const grid = document.getElementById('photoGrid');
     if (!PHOTOS.length) {{
-      grid.innerHTML = '<div class="placeholder-card" style="min-height:400px"><svg width="48" height="48" viewBox="0 0 48 48" fill="none"><rect x="6" y="10" width="36" height="28" rx="2" stroke="#c8a96e" stroke-width="1" stroke-opacity=".3"/><circle cx="17" cy="21" r="4" stroke="#c8a96e" stroke-width="1" stroke-opacity=".3"/><path d="M6 34L16 24L22 30L30 22L42 34" stroke="#c8a96e" stroke-width="1" stroke-opacity=".3"/></svg><p>{C["album_page"]["empty_album_message"]}</p></div>';
+      grid.innerHTML = '<div class="placeholder-card" style="min-height:400px"><svg width="48" height="48" viewBox="0 0 48 48" fill="none"><rect x="6" y="10" width="36" height="28" rx="2" stroke="#c8a96e" stroke-width="1" stroke-opacity=".3"/><circle cx="17" cy="21" r="4" stroke="#c8a96e" stroke-width="1" stroke-opacity=".3"/><path d="M6 34L16 24L22 30L30 22L42 34" stroke="#c8a96e" stroke-width="1" stroke-opacity=".3"/></svg><p>{txt_empty}</p></div>';
       return;
     }}
     grid.innerHTML = '';
