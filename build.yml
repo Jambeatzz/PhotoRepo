@@ -1,0 +1,32 @@
+name: Portfolio bauen & deployen
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Code herunterladen
+        uses: actions/checkout@v4
+
+      - name: Python einrichten
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: build.py ausführen
+        run: python build.py
+
+      - name: Generierte Dateien zurück in GitHub speichern
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add index.html album-*.html || true
+          git diff --staged --quiet || git commit -m "Portfolio automatisch generiert"
+          git push
