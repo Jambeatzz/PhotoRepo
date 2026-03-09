@@ -10,10 +10,10 @@
     "link_contact": "Kontakt"
   },
   "hero": {
-    "eyebrow": "Architektur & Abstrakt — Portfolio",
-    "title_line1": "Struktur",
-    "title_line2": "trifft Licht.",
-    "description": "Fotografische Erkundung von Form, Geometrie und dem Spiel zwischen Licht und Schatten in urbanen Räumen.",
+    "eyebrow": "Arbeit mit dem Moment — Portfolio",
+    "title_line1": "Eine Kamera",
+    "title_line2": "trifft den Moment.",
+    "description": "Fotografische Erkundung von Gedankengut und Gefühlen als Momentaunahme",
     "cta_button": "Alben entdecken",
     "coordinates": "48°08'N — 11°34'E"
   },
@@ -23,29 +23,29 @@
     "empty_message": "Noch keine Alben gefunden. Lege Unterordner in bilder/ an und führe build.py aus."
   },
   "about": {
-    "eyebrow": "Über den Fotografen",
-    "name": "Dein Name",
-    "title_italic": "hinter der Kamera.",
-    "portrait_placeholder": "Dein Foto hier",
+    "eyebrow": "Über mich",
+    "name": "Jordi Miguel Hohmann",
+    "title_italic": "Im Moment",
+    "portrait_placeholder": "Information ist nicht vergänglich",
     "portrait_src": "",
     "text_1": "Schreib hier etwas über dich — deinen fotografischen Ansatz, deine Inspiration und was dich zur Architektur- und Abstraktfotografie gebracht hat.",
     "text_2": "„Für mich ist Fotografie die Kunst, im Alltäglichen das Außergewöhnliche zu sehen — eine Fassade, ein Schattenwurf, eine Kurve aus Beton.“",
-    "stat_1_number": "5+",
-    "stat_1_label": "Jahre Erfahrung",
-    "stat_2_number": "200+",
+    "stat_1_number": "+",
+    "stat_1_label": "Keine Erfahrung",
+    "stat_2_number": "2000+",
     "stat_2_label": "Aufnahmen",
-    "stat_3_number": "12",
-    "stat_3_label": "Städte"
+    "stat_3_number": "Nur",
+    "stat_3_label": "Momentaufnahmen"
   },
   "contact": {
     "title_main": "Lass uns",
     "title_italic": "in Kontakt treten.",
     "description": "Für Kooperationen, Prints oder einfach um mehr über meine Arbeit zu erfahren — meld dich gerne.",
-    "email": "deine@email.de",
-    "instagram_handle": "@dein_handle",
-    "instagram_url": "https://instagram.com/dein_handle",
+    "email": "jordihohmann@icloud.com",
+    "instagram_handle": "@jj.randomshit",
+    "instagram_url": "https://instagram.com/jj.randomshit",
     "location": "Deutschland",
-    "availability": "Ja — für Projekte",
+    "availability": "auf Anfrage — für Projekte",
     "social_links": [
       {
         "label": "Instagram",
@@ -74,7 +74,7 @@
     "empty_album_message": "Noch keine Fotos in diesem Album. Bilder in den Album-Ordner ablegen & build.py ausführen."
   },
   "footer": {
-    "copyright": "© 2025 Dein Name — Alle Rechte vorbehalten",
-    "tagline": "Architektur & Abstrakt"
+    "copyright": "© 2025 Jordi Miguel Hohmann — Alle Rechte vorbehalten",
+    "tagline": "Arbeit im Moment"
   }
 }
