@@ -1,0 +1,80 @@
+{
+  "site": {
+    "title": "LENS",
+    "language": "de"
+  },
+  "nav": {
+    "logo": "Dein Name",
+    "link_gallery": "Alben",
+    "link_about": "Über mich",
+    "link_contact": "Kontakt"
+  },
+  "hero": {
+    "eyebrow": "Architektur & Abstrakt — Portfolio",
+    "title_line1": "Struktur",
+    "title_line2": "trifft Licht.",
+    "description": "Fotografische Erkundung von Form, Geometrie und dem Spiel zwischen Licht und Schatten in urbanen Räumen.",
+    "cta_button": "Alben entdecken",
+    "coordinates": "48°08'N — 11°34'E"
+  },
+  "gallery": {
+    "section_title_main": "Alben",
+    "section_title_italic": "& Serien",
+    "empty_message": "Noch keine Alben gefunden. Lege Unterordner in bilder/ an und führe build.py aus."
+  },
+  "about": {
+    "eyebrow": "Über den Fotografen",
+    "name": "Dein Name",
+    "title_italic": "hinter der Kamera.",
+    "portrait_placeholder": "Dein Foto hier",
+    "portrait_src": "",
+    "text_1": "Schreib hier etwas über dich — deinen fotografischen Ansatz, deine Inspiration und was dich zur Architektur- und Abstraktfotografie gebracht hat.",
+    "text_2": "„Für mich ist Fotografie die Kunst, im Alltäglichen das Außergewöhnliche zu sehen — eine Fassade, ein Schattenwurf, eine Kurve aus Beton.“",
+    "stat_1_number": "5+",
+    "stat_1_label": "Jahre Erfahrung",
+    "stat_2_number": "200+",
+    "stat_2_label": "Aufnahmen",
+    "stat_3_number": "12",
+    "stat_3_label": "Städte"
+  },
+  "contact": {
+    "title_main": "Lass uns",
+    "title_italic": "in Kontakt treten.",
+    "description": "Für Kooperationen, Prints oder einfach um mehr über meine Arbeit zu erfahren — meld dich gerne.",
+    "email": "deine@email.de",
+    "instagram_handle": "@dein_handle",
+    "instagram_url": "https://instagram.com/dein_handle",
+    "location": "Deutschland",
+    "availability": "Ja — für Projekte",
+    "social_links": [
+      {
+        "label": "Instagram",
+        "url": "https://instagram.com/dein_handle"
+      },
+      {
+        "label": "Behance",
+        "url": "https://behance.net/dein_profil"
+      },
+      {
+        "label": "500px",
+        "url": "https://500px.com/dein_profil"
+      }
+    ]
+  },
+  "album_page": {
+    "back_link": "Alle Alben",
+    "breadcrumb_prefix": "Portfolio —",
+    "view_mosaic": "Mosaik",
+    "view_grid": "Raster",
+    "view_single": "Einzeln",
+    "view_label": "Ansicht",
+    "next_album_label": "Nächstes Album",
+    "next_album_button": "Album öffnen",
+    "lightbox_close": "Schließen ✕",
+    "empty_album_message": "Noch keine Fotos in diesem Album. Bilder in den Album-Ordner ablegen & build.py ausführen."
+  },
+  "footer": {
+    "copyright": "© 2025 Dein Name — Alle Rechte vorbehalten",
+    "tagline": "Architektur & Abstrakt"
+  }
+}

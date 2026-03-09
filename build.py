@@ -36,26 +36,103 @@ import os
 import json
 import re
 import sys
+import subprocess
+import shutil
 from pathlib import Path
 
 # ─── KONFIGURATION ────────────────────────────────────────────────────────────
-BILDER_DIR   = "bilder"          # Ordner mit deinen Album-Unterordnern
-OUTPUT_DIR   = "."               # Wo die HTML-Dateien landen (gleicher Ordner)
-SITE_TITLE   = "Days I could"            # Dein Portfolio-Name (in <title>)
-AUTHOR_NAME  = "Jordi Miguel Hohmann"       # Dein Name
-EMAIL        = "jordihohmann@icloud.com"  # Kontakt-E-Mail
-INSTAGRAM    = "@jj.randomshit"    # Instagram-Handle
-INSTAGRAM_URL= "https://instagram.com/jj.randomshit"
-LOCATION     = "Hamburg - DE"     # Dein Standort
-COORDINATES  = "48°08'N — 11°34'E"  # Koordinaten im Hero
-ABOUT_TEXT_1 = "Ich mache Fotos, um den Moment festzuhalten, weil nichts ist schöner als einem Moment im Nachhinein noch mal durchleben zu können."
-ABOUT_TEXT_2 = '\u201eFür mich ist Fotografie die Kunst, im Alltäglichen das Außergewöhnliche zu sehen \u2014 eine Fassade, ein Schattenwurf, eine Kurve aus Beton.\u201c'
-STAT_YEARS   = "5+"
-STAT_PHOTOS  = "200+"
-STAT_CITIES  = "12"
+BILDER_DIR  = "bilder"      # Ordner mit deinen Album-Unterordnern
+OUTPUT_DIR  = "."           # Wo die HTML-Dateien landen
+CONTENT_FILE = "inhalt.json" # Datei mit allen Website-Texten
 
-IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".webp", ".gif", ".avif"}
+def load_content():
+    """Liest inhalt.json und gibt ein dict zurück.
+    Bricht mit einer klaren Fehlermeldung ab wenn die Datei fehlt."""
+    p = Path(CONTENT_FILE)
+    if not p.exists():
+        print(f"\n  FEHLER: '{CONTENT_FILE}' nicht gefunden!")
+        print(f"  Lege die Datei neben build.py ab.\n")
+        sys.exit(1)
+    try:
+        with open(p, encoding="utf-8") as f:
+            data = json.load(f)
+    except json.JSONDecodeError as e:
+        print(f"\n  FEHLER: '{CONTENT_FILE}' enthält ungültiges JSON:")
+        print(f"  {e}\n")
+        sys.exit(1)
+    return data
+
+# Inhalt global laden — alle Funktionen nutzen dieses Dict
+C = load_content()
+
+# Kurzreferenzen für häufig genutzte Abschnitte
+SITE_TITLE    = C["site"]["title"]
+AUTHOR_NAME   = C["about"]["name"]
+EMAIL         = C["contact"]["email"]
+INSTAGRAM     = C["contact"]["instagram_handle"]
+INSTAGRAM_URL = C["contact"]["instagram_url"]
+LOCATION      = C["contact"]["location"]
+COORDINATES   = C["hero"]["coordinates"]
+ABOUT_TEXT_1  = C["about"]["text_1"]
+ABOUT_TEXT_2  = C["about"]["text_2"]
+STAT_YEARS    = C["about"]["stat_1_number"]
+STAT_PHOTOS   = C["about"]["stat_2_number"]
+STAT_CITIES   = C["about"]["stat_3_number"]
+
+# Formate die der Browser direkt anzeigen kann (kein Convert nötig)
+NATIVE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".webp", ".gif", ".avif"}
+
+# Alle Formate die wir akzeptieren & ggf. zu JPG konvertieren
+ALL_EXTENSIONS = NATIVE_EXTENSIONS | {
+    ".heic", ".heif",          # iPhone
+    ".tiff", ".tif",           # TIFF
+    ".bmp",                    # Bitmap
+    ".raw", ".arw", ".cr2",    # RAW (Sony, Canon)
+    ".cr3", ".nef", ".nrw",    # RAW (Canon, Nikon)
+    ".orf", ".rw2", ".dng",    # RAW (Olympus, Panasonic, Adobe)
+    ".psd",                    # Photoshop
+    ".svg",                    # Vektor (wird direkt eingebunden)
+}
 # ──────────────────────────────────────────────────────────────────────────────
+
+def convert_images_in_folder(folder: Path):
+    """Konvertiert alle nicht-nativen Bilder in einem Ordner zu JPG.
+    Überspringt Dateien die bereits als JPG existieren."""
+    has_magick = shutil.which("magick") or shutil.which("convert")
+    if not has_magick:
+        warn("ImageMagick nicht gefunden — Konvertierung übersprungen.")
+        warn("Installiere ImageMagick: https://imagemagick.org")
+        return
+
+    cmd = shutil.which("magick") or "convert"
+
+    for f in sorted(folder.iterdir()):
+        if not f.is_file():
+            continue
+        ext = f.suffix.lower()
+        if ext in NATIVE_EXTENSIONS or ext == ".svg":
+            continue
+        if ext not in ALL_EXTENSIONS:
+            continue
+
+        target = f.with_suffix(".jpg")
+        if target.exists():
+            info(f"  Übersprungen (JPG existiert): {f.name}")
+            continue
+
+        log(f"  Konvertiere: {f.name} → {target.name}", CYAN)
+        try:
+            # magick input.heic output.jpg  ODER  convert input.heic output.jpg
+            args = [cmd, str(f), str(target)] if cmd == "magick" else ["convert", str(f), str(target)]
+            result = subprocess.run(args, capture_output=True, text=True, timeout=60)
+            if result.returncode == 0:
+                ok(f"  {f.name} → {target.name}")
+            else:
+                warn(f"  Fehler bei {f.name}: {result.stderr.strip()[:80]}")
+        except subprocess.TimeoutExpired:
+            warn(f"  Timeout bei {f.name} — übersprungen")
+        except Exception as e:
+            warn(f"  Fehler bei {f.name}: {e}")
 
 # Farben für Terminal-Output
 GREEN  = "\033[92m"
@@ -113,16 +190,22 @@ def scan_albums():
             name        = title_from_slug(folder.name)
             description = ""
 
+        # Nicht-native Bilder zu JPG konvertieren (HEIC, RAW, TIFF, etc.)
+        convert_images_in_folder(folder)
+
         # Alle Bilddateien sammeln & natürlich sortieren
         photos = sorted(
             [f for f in folder.iterdir()
-             if f.is_file() and f.suffix.lower() in IMAGE_EXTENSIONS],
+             if f.is_file() and f.suffix.lower() in ALL_EXTENSIONS],
             key=lambda p: natural_sort_key(p.name)
         )
 
         photo_list = [
             {
-                "src":   f"{BILDER_DIR}/{folder.name}/{p.name}",
+                # Non-native formats will be converted to .jpg — reference the .jpg version
+                "src":   f"{BILDER_DIR}/{folder.name}/{p.stem}.jpg"
+                         if p.suffix.lower() not in NATIVE_EXTENSIONS and p.suffix.lower() != ".svg"
+                         else f"{BILDER_DIR}/{folder.name}/{p.name}",
                 "title": p.stem.replace("-", " ").replace("_", " ").title()
             }
             for p in photos
@@ -322,17 +405,17 @@ def build_index(albums):
 <nav>
   <a href="index.html" class="nav-logo" data-hover>{SITE_TITLE}</a>
   <ul class="nav-links">
-    <li><a href="#gallery" data-hover>Alben</a></li>
-    <li><a href="#about" data-hover>Über mich</a></li>
-    <li><a href="#contact" data-hover>Kontakt</a></li>
+    <li><a href="#gallery" data-hover>{C["nav"]["link_gallery"]}</a></li>
+    <li><a href="#about" data-hover>{C["nav"]["link_about"]}</a></li>
+    <li><a href="#contact" data-hover>{C["nav"]["link_contact"]}</a></li>
   </ul>
 </nav>
 <section class="hero">
   <div class="hero-left" style="position:relative">
-    <p class="hero-eyebrow">Architektur &amp; Abstrakt — Portfolio</p>
-    <h1 class="hero-title">Struktur<br><em>trifft Licht.</em></h1>
-    <p class="hero-desc">Fotografische Erkundung von Form, Geometrie und dem Spiel zwischen Licht und Schatten in urbanen Räumen.</p>
-    <a href="#gallery" class="hero-cta" data-hover>Alben entdecken</a>
+    <p class="hero-eyebrow">{C["hero"]["eyebrow"]}</p>
+    <h1 class="hero-title">{C["hero"]["title_line1"]}<br><em>{C["hero"]["title_line2"]}</em></h1>
+    <p class="hero-desc">{C["hero"]["description"]}</p>
+    <a href="#gallery" class="hero-cta" data-hover>{C["hero"]["cta_button"]}</a>
     <p class="hero-number">{COORDINATES}</p>
   </div>
   <div class="hero-right">
@@ -350,13 +433,13 @@ def build_index(albums):
 </section>
 <section class="albums-section" id="gallery">
   <div class="section-header reveal">
-    <h2 class="section-title">Alben <em>&amp; Serien</em></h2>
+    <h2 class="section-title">{C["gallery"]["section_title_main"]} <em>{C["gallery"]["section_title_italic"]}</em></h2>
     <div class="section-line"></div>
     <span class="section-count">{n} {'Album' if n == 1 else 'Alben'}</span>
   </div>
   <div class="album-grid" id="albumGrid">
   </div>
-  {'<p class="empty-albums">Noch keine Alben gefunden.<br>Lege Unterordner in bilder/ an und führe build.py aus.</p>' if n == 0 else ''}
+  {C["gallery"]["empty_message"] if n == 0 else ''}
 </section>
 <section class="about-section" id="about">
   <div class="about-image-wrap reveal">
@@ -366,40 +449,40 @@ def build_index(albums):
       <rect x="0" y="0" width="400" height="533" fill="url(#gp)"/>
       <circle cx="200" cy="180" r="80" fill="#2a2520"/>
       <rect x="80" y="300" width="240" height="233" fill="#222"/>
-      <text x="200" y="490" text-anchor="middle" font-family="Georgia" font-size="12" fill="#555" letter-spacing="2">Dein Foto hier</text>
+      <text x="200" y="490" text-anchor="middle" font-family="Georgia" font-size="12" fill="#555" letter-spacing="2">{C["about"]["portrait_placeholder"]}</text>
     </svg>
     <div class="about-img-deco"></div>
   </div>
   <div class="reveal">
-    <p class="about-eyebrow">Über den Fotografen</p>
-    <h2 class="about-title">{AUTHOR_NAME}<br><em>hinter der Kamera.</em></h2>
+    <p class="about-eyebrow">{C["about"]["eyebrow"]}</p>
+    <h2 class="about-title">{AUTHOR_NAME}<br><em>{C["about"]["title_italic"]}</em></h2>
     <p class="about-text">{ABOUT_TEXT_1}</p>
     <p class="about-text">{ABOUT_TEXT_2}</p>
     <div class="about-stats">
-      <div><span class="stat-num">{STAT_YEARS}</span><span class="stat-label">Jahre Erfahrung</span></div>
-      <div><span class="stat-num">{STAT_PHOTOS}</span><span class="stat-label">Aufnahmen</span></div>
-      <div><span class="stat-num">{STAT_CITIES}</span><span class="stat-label">Städte</span></div>
+      <div><span class="stat-num">{STAT_YEARS}</span><span class="stat-label">{C["about"]["stat_1_label"]}</span></div>
+      <div><span class="stat-num">{STAT_PHOTOS}</span><span class="stat-label">{C["about"]["stat_2_label"]}</span></div>
+      <div><span class="stat-num">{STAT_CITIES}</span><span class="stat-label">{C["about"]["stat_3_label"]}</span></div>
     </div>
   </div>
 </section>
 <section class="contact-section" id="contact">
   <div class="contact-left reveal">
-    <h2>Lass uns<br><em>in Kontakt treten.</em></h2>
-    <p>Für Kooperationen, Prints oder einfach um mehr über meine Arbeit zu erfahren — meld dich gerne.</p>
+    <h2>{C["contact"]["title_main"]}<br><em>{C["contact"]["title_italic"]}</em></h2>
+    <p>{C["contact"]["description"]}</p>
     <div class="social-links">
-      <a href="{INSTAGRAM_URL}" target="_blank" class="social-link" data-hover>Instagram</a>
+      {''.join(f'<a href="{s["url"]}" target="_blank" class="social-link" data-hover>{s["label"]}</a>' for s in C["contact"]["social_links"])}
     </div>
   </div>
   <div class="contact-right reveal">
     <div class="contact-item"><span class="contact-label">E-Mail</span><a href="mailto:{EMAIL}" class="contact-value" data-hover>{EMAIL}</a></div>
     <div class="contact-item"><span class="contact-label">Instagram</span><a href="{INSTAGRAM_URL}" target="_blank" class="contact-value" data-hover>{INSTAGRAM}</a></div>
     <div class="contact-item"><span class="contact-label">Standort</span><span class="contact-value">{LOCATION}</span></div>
-    <div class="contact-item"><span class="contact-label">Verfügbar</span><span class="contact-value">Ja — für Projekte</span></div>
+    <div class="contact-item"><span class="contact-label">Verfügbar</span><span class="contact-value">{C["contact"]["availability"]}</span></div>
   </div>
 </section>
 <footer>
-  <p>© 2025 {AUTHOR_NAME} — Alle Rechte vorbehalten</p>
-  <p>Architektur &amp; Abstrakt</p>
+  <p>{C["footer"]["copyright"]}</p>
+  <p>{C["footer"]["tagline"]}</p>
 </footer>
 <script>
   const ALBUMS = {albums_js};
@@ -457,10 +540,10 @@ def build_album_page(album, all_albums):
         next_section = f"""
 <div class="next-album-section">
   <div>
-    <p class="next-label">Nächstes Album</p>
+    <p class="next-label">{{C['album_page']['next_album_label']}}</p>
     <p class="next-name">{next_album['name']}</p>
   </div>
-  <a href="album-{next_album['slug']}.html" class="next-link" data-hover>Album öffnen</a>
+  <a href="album-{next_album['slug']}.html" class="next-link" data-hover>{{C['album_page']['next_album_button']}}</a>
 </div>"""
 
     return f"""<!DOCTYPE html>
@@ -574,7 +657,7 @@ def build_album_page(album, all_albums):
 <div class="cursor-ring" id="cursorRing"></div>
 <nav>
   <a href="index.html" class="nav-logo" data-hover>{SITE_TITLE}</a>
-  <a href="index.html" class="nav-back" data-hover>Alle Alben</a>
+  <a href="index.html" class="nav-back" data-hover>{{C['album_page']['back_link']}}</a>
 </nav>
 <header class="album-header">
   <p class="album-breadcrumb">Portfolio — {album['name']}</p>
@@ -587,10 +670,10 @@ def build_album_page(album, all_albums):
   </div>
 </header>
 <div class="view-controls">
-  <span class="view-label">Ansicht</span>
-  <button class="view-btn active" id="btn-masonry" onclick="setView('masonry')" data-hover>Mosaik</button>
-  <button class="view-btn" id="btn-uniform" onclick="setView('uniform')" data-hover>Raster</button>
-  <button class="view-btn" id="btn-wide" onclick="setView('wide')" data-hover>Einzeln</button>
+  <span class="view-label">{{C['album_page']['view_label']}}</span>
+  <button class="view-btn active" id="btn-masonry" onclick="setView('masonry')" data-hover>{{C['album_page']['view_mosaic']}}</button>
+  <button class="view-btn" id="btn-uniform" onclick="setView('uniform')" data-hover>{{C['album_page']['view_grid']}}</button>
+  <button class="view-btn" id="btn-wide" onclick="setView('wide')" data-hover>{{C['album_page']['view_single']}}</button>
 </div>
 <section class="photos-section">
   <div class="grid-masonry" id="photoGrid"></div>
@@ -601,7 +684,7 @@ def build_album_page(album, all_albums):
   <p>{album['name']}</p>
 </footer>
 <div class="lightbox" id="lightbox">
-  <button class="lb-close" onclick="closeLB()" data-hover>Schließen ✕</button>
+  <button class="lb-close" onclick="closeLB()" data-hover>{{C['album_page']['lightbox_close']}}</button>
   <button class="lb-nav prev" onclick="navLB(-1)" data-hover>←</button>
   <div class="lb-img-wrap"><img src="" alt="" class="lb-img" id="lbImg"/></div>
   <button class="lb-nav next" onclick="navLB(1)" data-hover>→</button>
@@ -618,7 +701,7 @@ def build_album_page(album, all_albums):
   function renderGrid() {{
     const grid = document.getElementById('photoGrid');
     if (!PHOTOS.length) {{
-      grid.innerHTML = '<div class="placeholder-card" style="min-height:400px"><svg width="48" height="48" viewBox="0 0 48 48" fill="none"><rect x="6" y="10" width="36" height="28" rx="2" stroke="#c8a96e" stroke-width="1" stroke-opacity=".3"/><circle cx="17" cy="21" r="4" stroke="#c8a96e" stroke-width="1" stroke-opacity=".3"/><path d="M6 34L16 24L22 30L30 22L42 34" stroke="#c8a96e" stroke-width="1" stroke-opacity=".3"/></svg><p>Noch keine Fotos in diesem Album.<br>Bilder in bilder/{album['folder']}/ ablegen &amp; build.py ausführen.</p></div>';
+      grid.innerHTML = '<div class="placeholder-card" style="min-height:400px"><svg width="48" height="48" viewBox="0 0 48 48" fill="none"><rect x="6" y="10" width="36" height="28" rx="2" stroke="#c8a96e" stroke-width="1" stroke-opacity=".3"/><circle cx="17" cy="21" r="4" stroke="#c8a96e" stroke-width="1" stroke-opacity=".3"/><path d="M6 34L16 24L22 30L30 22L42 34" stroke="#c8a96e" stroke-width="1" stroke-opacity=".3"/></svg><p>{C["album_page"]["empty_album_message"]}</p></div>';
       return;
     }}
     grid.innerHTML = '';
@@ -705,7 +788,8 @@ def main():
     log(f"  {len(albums)} Album{'s' if len(albums) != 1 else ''} + index.html generiert.", GREEN)
     log(f"\n  Nächste Schritte:", CYAN)
     log(f"  1. Alles in dein GitHub-Repo pushen")
-    log(f"  2. Neue Alben? Einfach Ordner in bilder/ anlegen → build.py erneut ausführen\n")
+    log(f"  2. Neue Alben? Einfach Ordner in bilder/ anlegen → build.py erneut ausführen")
+    log(f"  3. Unterstützte Formate: HEIC, JPG, PNG, WEBP, TIFF, BMP, RAW (ARW/CR2/NEF/...), PSD\n")
 
 if __name__ == "__main__":
     main()
